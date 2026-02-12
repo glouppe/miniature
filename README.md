@@ -9,7 +9,7 @@ A complete AI agent in ~225 lines of Python. Built for teaching.
 An LLM-powered agent with tool use and persistent memory, from scratch. No frameworks, no abstractions. The entire system fits in three files:
 
 ```
-runtime.py   agent loop, tools, memory, system prompt   (132 lines)
+runtime.py   agent loop, tools, memory, system prompt    (132 lines)
 model.py     raw transformer inference + sampling         (46 lines)
 cli.py       terminal interface                           (47 lines)
 ```
