@@ -31,6 +31,10 @@ The system prompt lists available tools and any saved memories. The model output
 
 Memory is just a text file (`memory.txt`) loaded into the system prompt at startup. The model can append to it via the `remember` tool. Stateless model, persistent memory.
 
+## ⚠️ Disclaimer
+
+This code executes arbitrary shell commands as directed by the LLM. Run it only in sandboxed or disposable environments. Do not run it on machines with sensitive data or elevated privileges.
+
 ## Quick start
 
 ```bash
