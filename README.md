@@ -2,6 +2,8 @@
 
 A complete AI agent in ~225 lines of Python. Built for teaching.
 
+![demo](demo.gif)
+
 ## What this is
 
 An LLM-powered agent with tool use and persistent memory, from scratch. No frameworks, no abstractions. The entire system fits in three files:
