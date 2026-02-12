@@ -17,7 +17,7 @@ cli.py       terminal interface                           (47 lines)
 Two inference backends:
 
 - **Ollama**: any model via local API (default: mistral-small3.2)
-- **Raw**: direct HuggingFace transformer, explicit autoregressive loop (Qwen2.5-1.5B)
+- **Raw**: direct HuggingFace transformer, explicit autoregressive loop (Qwen2.5-7B)
 
 ## The idea
 
