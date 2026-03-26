@@ -42,6 +42,7 @@ TOOLS = {
     "remember":   {"fn": remember,   "desc": "remember(text) - save something to long-term memory"},
 }
 
+
 # System prompt
 
 SYSTEM_PROMPT = """You are Miniature, a helpful assistant with tools. Always use a tool when you need information you don't have (time, files, system state, etc.). Never refuse, use shell_exec if unsure.
@@ -54,7 +55,11 @@ To call a tool, output ONLY a JSON block:
 Tools:
 """ + "\n".join(f"- {t['desc']}" for t in TOOLS.values()) + """
 
-You will see the tool result, then can call another or reply normally."""
+You will see the tool result, then can call another or reply normally.
+
+Your memories:
+""" + load_memory()
+
 
 # LLM backends
 
@@ -67,9 +72,10 @@ def call_ollama(messages, model="mistral-small3.2", base_url="http://localhost:1
     r.raise_for_status()
     return r.json()["choices"][0]["message"]["content"]
 
-def call_raw(messages):
+def call_local(messages):
     from model import generate
     return generate(messages)
+
 
 # Tool-call parsing and execution
 
@@ -92,13 +98,12 @@ def execute_tool(name, args):
     except Exception as e:
         return f"error: {e}"
 
+
 # Agent loop
 
 def run(backend="ollama"):
-    call = call_raw if backend == "raw" else call_ollama
-    memory = load_memory()
-    system = SYSTEM_PROMPT + (f"\n\nYour memories:\n{memory}" if memory else "")
-    messages = [{"role": "system", "content": system}]
+    call = call_local if backend == "local" else call_ollama
+    messages = [{"role": "system", "content": SYSTEM_PROMPT}]
     cli.banner(backend)
 
     while True:
@@ -109,7 +114,7 @@ def run(backend="ollama"):
         messages.append({"role": "user", "content": user})
 
         while True:
-            cli.raw_prompt(messages)
+            cli.verbose_prompt(messages)
             response = call(messages)
             messages.append({"role": "assistant", "content": response})
 
@@ -122,11 +127,13 @@ def run(backend="ollama"):
             cli.tool_call(name, args)
             result = execute_tool(name, args)
             cli.tool_result(name, result)
-            messages.append({"role": "user", "content": f"Tool result:\n{name}: {result}"})
+            messages.append({"role": "tool", "content": f"{name}: {result}"})
 
     cli.goodbye()
 
+
 if __name__ == "__main__":
-    backend = "raw" if "--raw-model" in sys.argv else "ollama"
-    cli.show_raw = "--raw-prompt" in sys.argv
+    use_local = "--local-model" in sys.argv
+    backend = "local" if use_local else "ollama"
+    cli.verbose = "--verbose" in sys.argv
     run(backend=backend)

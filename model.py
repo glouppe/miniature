@@ -1,8 +1,9 @@
-"""Raw local inference. No model.generate()."""
+"""Local Hugging Face inference. No model.generate()."""
 
 import torch
 import torch.nn.functional as F
 from transformers import AutoModelForCausalLM, AutoTokenizer
+
 
 # Model loading
 
@@ -11,8 +12,11 @@ MODEL_NAME = "Qwen/Qwen2.5-7B-Instruct"
 device = "cuda" if torch.cuda.is_available() else "cpu"
 tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 model = AutoModelForCausalLM.from_pretrained(
-    MODEL_NAME, dtype=torch.float16, device_map="auto"
+    MODEL_NAME,
+    torch_dtype=torch.float16,
+    device_map="auto",
 ).eval()
+
 
 # Sampling
 
@@ -20,12 +24,16 @@ def sample_token(logits, temperature=0.7):
     probs = F.softmax(logits / temperature, dim=-1)
     return torch.multinomial(probs, 1).item()
 
+
 # Generation loop
 
 @torch.no_grad()
 def generate(messages, max_tokens=512, temperature=0.7):
-    prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+    #print(f"messages = {messages}")
+    prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True) 
+    #print(f"prompt = {prompt}")
     input_ids = tokenizer.encode(prompt, return_tensors="pt").to(device)
+    #print(f"{input_ids}")
 
     past_key_values = None
     generated = []

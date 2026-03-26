@@ -8,7 +8,7 @@ A complete AI agent in ~225 lines of Python. No frameworks, no abstractions.
 
 ```
 runtime.py   agent loop, tools, memory, system prompt
-model.py     raw transformer inference + sampling
+model.py     local Hugging Face transformer inference + sampling
 cli.py       terminal interface
 ```
 
@@ -20,12 +20,13 @@ ollama pull mistral-small3.2
 pip install requests
 python runtime.py
 
-# with raw local inference (needs GPU)
+# with local Hugging Face models (needs GPU)
 pip install torch transformers accelerate
-python runtime.py --raw-model
+# defaults to Qwen/Qwen2.5-7B-Instruct
+python runtime.py --local-model
 
-# inspect the raw prompt sent to the LLM
-python runtime.py --raw-prompt
+# enable verbose mode to inspect prompts sent to the LLM
+python runtime.py --verbose
 ```
 
 ## Adding tools

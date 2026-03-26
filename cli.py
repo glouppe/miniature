@@ -1,6 +1,6 @@
 """Terminal interface."""
 
-show_raw = False
+verbose = False
 
 DIM    = "\033[2m"
 BOLD   = "\033[1m"
@@ -34,12 +34,12 @@ def tool_result(name, result):
     preview = lines[0][:80] + ("…" if len(lines[0]) > 80 or len(lines) > 1 else "")
     print(f"    {GREEN}→{RESET} {DIM}{preview}{RESET}")
 
-def raw_prompt(messages):
-    if not show_raw:
+def verbose_prompt(messages, max_size=1024):
+    if not verbose:
         return
-    print(f"{DIM}── raw prompt ──{RESET}")
+    print(f"{DIM}── verbose prompt ──{RESET}")
     for m in messages:
-        text = m["content"][:200] + ("…" if len(m["content"]) > 200 else "")
+        text = m["content"][:max_size] + ("…" if len(m["content"]) > max_size else "")
         print(f"{DIM}  [{m['role']}] {text}{RESET}")
     print(f"{DIM}────────────────{RESET}")
 
